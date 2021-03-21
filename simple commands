@@ -1,0 +1,16 @@
+import telebot
+
+bot = telebot.TeleBot('1642163743:AAHy_TUiJEOyezj6bUsowB7HkVQvFTC2dpM')
+
+@bot.message_handler(commands=['start'])
+def start_message(message):
+    bot.send_message(message.chat.id, 'Привет, я помогу тебе записаться в парикмахерскую')
+
+@bot.message_handler(content_types=['text'])
+def send_text(message):
+    if message.text.lower() == 'привет':
+        bot.send_message(message.chat.id, 'Привет')
+    elif message.text.lower() == 'пока':
+        bot.send_message(message.chat.id, 'Прощай')
+
+bot.polling()
