@@ -1,0 +1,19 @@
+import telebot
+
+
+TOKEN = '1677364878:AAHEE3qbWEfqKtX-_ZenyOw58PHWi4ieqN0'
+
+bot = telebot.TeleBot(TOKEN)
+
+
+@bot.message_handler(commands=['привет'])
+def start_handler(message):
+    bot.send_message(message.from_user.id, "Привет, падаван! Я - telegram-bot для записи в парикмахерскую, могу тебе помочь?")
+
+
+@bot.message_handler(commands=['help'])
+def help_handler(message):
+    bot.send_message(message.from_user.id, "Меня только что создали, могу ответить только на /start и /help")
+
+
+bot.polling()
