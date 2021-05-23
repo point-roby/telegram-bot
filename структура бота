@@ -1,0 +1,49 @@
+import telebot
+import configures
+from telebot import types
+import sqlite3
+
+bot = telebot.TeleBot(configures.config['token'])
+
+@bot.message_handler(commands=['get info', 'info'])
+def get_user_info(message):
+    markup_inline = types.InlineKeyboardMarkup()
+    item_yes = types.InlineKeyboardButton(text = 'ДА', callback_data= 'yes')
+    item_no = types.InlineKeyboardButton(text = "НЕТ", callback_data= 'no')
+
+    markup_inline.add(item_no, item_yes)
+    bot.send_message(message.chat.id, 'Привет, я Telegram bot для записи в парикмахерскую! Могу тебе помочь?',
+                     reply_markup = markup_inline
+                     )
+
+@bot.callback_query_handler(func= lambda call: True)
+def answer(call):
+    if call.data == 'yes':
+        markup_reply = types.ReplyKeyboardMarkup(resize_keyboard= True)
+        item_id = types.KeyboardButton('ЗАПИСЬ')
+        item_name = types.KeyboardButton('ФИО')
+
+        markup_reply.add(item_id, item_name)
+        bot.send_message(call.message.chat.id, 'Oтлично, тогда давай совершим запись!',
+                                reply_markup = markup_reply
+                         )
+
+    elif call.data == 'no':
+        bot.send_message(call.message.chat.id, 'Жаль( \nЕсли что, ты знаешь, где меня найти.')
+
+
+
+@bot.message_handler(content_types = ['text'])
+def get_text(message):
+    if message.text == 'ЗАПИСЬ':
+        bot.send_message(message.chat.id, f'Напиши удобную для тебя дату')
+    if message.text == 'ФИО':
+        bot.send_message(message.chat.id, f'Записываю твои фамилию и имя')
+    if message.text.lower() == 'привет':
+            bot.send_message(message.chat.id, 'Привет! \nЕсли хочешь пообщаться, то напиши мне "/info"')
+    if message.text.lower() != 'привет' or 'ЗАПИСЬ' or 'ФИО':
+        bot.send_message(message.chat.id, 'Я не очень понимаю, что значат твои символы( \nНапиши мне "/info"')
+
+
+
+bot.polling(none_stop = True, interval = 0)
